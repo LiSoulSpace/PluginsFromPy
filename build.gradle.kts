@@ -7,10 +7,10 @@ plugins {
 }
 
 group = "com.github.soulspace"
-version = "0.1.0"
+version = "0.1.2"
 
 repositories {
     mavenLocal()
-    maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
+    //maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     mavenCentral()
 }

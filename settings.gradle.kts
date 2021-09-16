@@ -7,4 +7,4 @@ pluginManagement {
     }
 }
 // TODO changed the name to your plugin's name
-rootProject.name = "mirai-console-plugin-template"
+rootProject.name = "PluginsFromPy"
