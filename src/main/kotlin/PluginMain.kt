@@ -44,6 +44,8 @@ object PluginMain : KotlinPlugin(
         // author 和 info 可以删除.
     }
 ) {
+    private val pythonFilesDir = File(System.getProperty("user.dir") + "/data/python-files")
+    private val runSWC = RunScriptWithCommander
     override fun onEnable() {
         logger.info { "Plugin loaded" }
         //配置文件目录 "${dataFolder.absolutePath}/"
@@ -57,14 +59,26 @@ object PluginMain : KotlinPlugin(
                     group.sendMessage("请输入要搜索的关键字")
                     return@subscribeAlways
                 }
-                val pythonFilesDir = File(System.getProperty("user.dir") + "/data/python-files")
-                val runSWC = RunScriptWithCommander
                 val pythonFilePath = "$pythonFilesDir/WikipediaGet.py"
                 val commandT = "$pythonFilePath $commandBody"
                 runSWC.runPythonScript(commandT)
                 val imageFileT = File("$pythonFilesDir/WikipediaResult.png")
                 group.sendImage(imageFileT)
                 logger.info { "#wiki $commandBody repeat over!" }
+            }
+            else if (message.contentToString().startsWith("#微博")){
+                val pythonFilePathWeibo = "$pythonFilesDir/WeiboHotSearch.py"
+                runSWC.runPythonScript(pythonFilePathWeibo)
+                val imageFileWeibo = File("$pythonFilesDir/WeiboHotSearch.png")
+                group.sendImage(imageFileWeibo)
+                logger.info{"#微博 repeat over!"}
+            }
+            else if(message.contentToString().startsWith("#知乎")){
+                val pythonFilePathWeibo = "$pythonFilesDir/ZhiHuHotSearch.py"
+                runSWC.runPythonScript(pythonFilePathWeibo)
+                val imageFileWeibo = File("$pythonFilesDir/ZhiHuHotSearch.png")
+                group.sendImage(imageFileWeibo)
+                logger.info{"#知乎 repeat over!"}
             }
         }
     }
