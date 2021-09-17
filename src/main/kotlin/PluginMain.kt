@@ -33,7 +33,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.soulspace.pluginsFromPy",
         name = "pluginsFromPy",
-        version = "0.2.2"
+        version = "0.3.0"
     ) {
         author("soulspace")
         info(
@@ -89,7 +89,7 @@ object PluginMain : KotlinPlugin(
                     runSWC.runPythonScript(pythonFilePathWeibo)
                     val imageFileWeibo = File("$pythonFilesDir/DailyQuestionGet.png")
                     group.sendImage(imageFileWeibo)
-                    logger.info { "#baidu repeat over!" }
+                    logger.info { "#leetcode repeat over!" }
                 }
             }
         }
