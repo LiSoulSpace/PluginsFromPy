@@ -50,41 +50,47 @@ object PluginMain : KotlinPlugin(
         logger.info { "Plugin loaded" }
         //配置文件目录 "${dataFolder.absolutePath}/"
         val eventChannel = GlobalEventChannel.parentScope(this)
-        eventChannel.subscribeAlways<GroupMessageEvent>{
+        eventChannel.subscribeAlways<GroupMessageEvent> {
             //群消息
             //复读示例
-            if (message.contentToString().startsWith("#wiki ")) {
-                val commandBody = message.contentToString().substringAfter("#wiki ")
-                if (commandBody == ""){
-                    group.sendMessage("请输入要搜索的关键字")
-                    return@subscribeAlways
+            if (message.contentToString().startsWith("#")) {
+                if (message.contentToString().startsWith("#wiki ")) {
+                    val commandBody = message.contentToString().substringAfter("#wiki ")
+                    if (commandBody == "") {
+                        group.sendMessage("请输入要搜索的关键字")
+                        return@subscribeAlways
+                    }
+                    val pythonFilePath = "$pythonFilesDir/WikipediaGet.py"
+                    val commandT = "$pythonFilePath $commandBody"
+                    runSWC.runPythonScript(commandT)
+                    val imageFileT = File("$pythonFilesDir/WikipediaResult.png")
+                    group.sendImage(imageFileT)
+                    logger.info { "#wiki $commandBody repeat over!" }
+                } else if (message.contentToString().equals("#weibo", true)) {
+                    val pythonFilePathWeibo = "$pythonFilesDir/WeiboHotSearch.py"
+                    runSWC.runPythonScript(pythonFilePathWeibo)
+                    val imageFileWeibo = File("$pythonFilesDir/WeiboHotSearch.png")
+                    group.sendImage(imageFileWeibo)
+                    logger.info { "#weibo repeat over!" }
+                } else if (message.contentToString().equals("#zhihu", true)) {
+                    val pythonFilePathWeibo = "$pythonFilesDir/ZhiHuHotSearch.py"
+                    runSWC.runPythonScript(pythonFilePathWeibo)
+                    val imageFileWeibo = File("$pythonFilesDir/ZhiHuHotSearch.png")
+                    group.sendImage(imageFileWeibo)
+                    logger.info { "#zhihu repeat over!" }
+                } else if (message.contentToString().equals("#baidu", true)) {
+                    val pythonFilePathWeibo = "$pythonFilesDir/BaiduHotSearch.py"
+                    runSWC.runPythonScript(pythonFilePathWeibo)
+                    val imageFileWeibo = File("$pythonFilesDir/BaiduHotSearch.png")
+                    group.sendImage(imageFileWeibo)
+                    logger.info { "#baidu repeat over!" }
+                } else if (message.contentToString().equals("#leetcode", true)){
+                    val pythonFilePathWeibo = "$pythonFilesDir/DailyQuestionGet.py"
+                    runSWC.runPythonScript(pythonFilePathWeibo)
+                    val imageFileWeibo = File("$pythonFilesDir/DailyQuestionGet.png")
+                    group.sendImage(imageFileWeibo)
+                    logger.info { "#baidu repeat over!" }
                 }
-                val pythonFilePath = "$pythonFilesDir/WikipediaGet.py"
-                val commandT = "$pythonFilePath $commandBody"
-                runSWC.runPythonScript(commandT)
-                val imageFileT = File("$pythonFilesDir/WikipediaResult.png")
-                group.sendImage(imageFileT)
-                logger.info { "#wiki $commandBody repeat over!" }
-            }
-            else if (message.contentToString().equals("#weibo", true)){
-                val pythonFilePathWeibo = "$pythonFilesDir/WeiboHotSearch.py"
-                runSWC.runPythonScript(pythonFilePathWeibo)
-                val imageFileWeibo = File("$pythonFilesDir/WeiboHotSearch.png")
-                group.sendImage(imageFileWeibo)
-                logger.info{"#weibo repeat over!"}
-            }
-            else if(message.contentToString().equals("#zhihu", true)){
-                val pythonFilePathWeibo = "$pythonFilesDir/ZhiHuHotSearch.py"
-                runSWC.runPythonScript(pythonFilePathWeibo)
-                val imageFileWeibo = File("$pythonFilesDir/ZhiHuHotSearch.png")
-                group.sendImage(imageFileWeibo)
-                logger.info{"#zhihu repeat over!"}
-            }else if(message.contentToString().equals("#baidu", true)){
-                val pythonFilePathWeibo = "$pythonFilesDir/BaiduHotSearch.py"
-                runSWC.runPythonScript(pythonFilePathWeibo)
-                val imageFileWeibo = File("$pythonFilesDir/BaiduHotSearch.png")
-                group.sendImage(imageFileWeibo)
-                logger.info{"#baidu repeat over!"}
             }
         }
     }
