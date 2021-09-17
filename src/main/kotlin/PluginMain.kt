@@ -33,7 +33,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.soulspace.pluginsFromPy",
         name = "pluginsFromPy",
-        version = "0.1.2"
+        version = "0.2.2"
     ) {
         author("soulspace")
         info(
@@ -66,19 +66,25 @@ object PluginMain : KotlinPlugin(
                 group.sendImage(imageFileT)
                 logger.info { "#wiki $commandBody repeat over!" }
             }
-            else if (message.contentToString().startsWith("#微博")){
+            else if (message.contentToString().equals("#weibo", true)){
                 val pythonFilePathWeibo = "$pythonFilesDir/WeiboHotSearch.py"
                 runSWC.runPythonScript(pythonFilePathWeibo)
                 val imageFileWeibo = File("$pythonFilesDir/WeiboHotSearch.png")
                 group.sendImage(imageFileWeibo)
-                logger.info{"#微博 repeat over!"}
+                logger.info{"#weibo repeat over!"}
             }
-            else if(message.contentToString().startsWith("#知乎")){
+            else if(message.contentToString().equals("#zhihu", true)){
                 val pythonFilePathWeibo = "$pythonFilesDir/ZhiHuHotSearch.py"
                 runSWC.runPythonScript(pythonFilePathWeibo)
                 val imageFileWeibo = File("$pythonFilesDir/ZhiHuHotSearch.png")
                 group.sendImage(imageFileWeibo)
-                logger.info{"#知乎 repeat over!"}
+                logger.info{"#zhihu repeat over!"}
+            }else if(message.contentToString().equals("#baidu", true)){
+                val pythonFilePathWeibo = "$pythonFilesDir/BaiduHotSearch.py"
+                runSWC.runPythonScript(pythonFilePathWeibo)
+                val imageFileWeibo = File("$pythonFilesDir/BaiduHotSearch.png")
+                group.sendImage(imageFileWeibo)
+                logger.info{"#baidu repeat over!"}
             }
         }
     }
