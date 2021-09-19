@@ -13,6 +13,7 @@ import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.utils.info
 import java.io.File
+import java.util.HashMap
 
 /**
  * 使用 kotlin 版请把
@@ -46,6 +47,7 @@ object PluginMain : KotlinPlugin(
 ) {
     private val pythonFilesDir = File(System.getProperty("user.dir") + "/data/python-files")
     private val runSWC = RunScriptWithCommander
+    private var groupRepeatMap = HashMap<Long, GroupRepeatInformation>()
     override fun onEnable() {
         logger.info { "Plugin loaded" }
         //配置文件目录 "${dataFolder.absolutePath}/"
@@ -84,12 +86,28 @@ object PluginMain : KotlinPlugin(
                     val imageFileWeibo = File("$pythonFilesDir/BaiduHotSearch.png")
                     group.sendImage(imageFileWeibo)
                     logger.info { "#baidu repeat over!" }
-                } else if (message.contentToString().equals("#leetcode", true)){
+                } else if (message.contentToString().equals("#leetcode", true)) {
                     val pythonFilePathWeibo = "$pythonFilesDir/DailyQuestionGet.py"
                     runSWC.runPythonScript(pythonFilePathWeibo)
                     val imageFileWeibo = File("$pythonFilesDir/DailyQuestionGet.png")
                     group.sendImage(imageFileWeibo)
                     logger.info { "#leetcode repeat over!" }
+                }
+            } else {
+                if (groupRepeatMap.keys.contains(group.id)) {
+                    groupRepeatMap[group.id]!!.lastMsg = groupRepeatMap[group.id]!!.thisMsg
+                    groupRepeatMap[group.id]!!.thisMsg = message.contentToString()
+                    if (groupRepeatMap[group.id]!!.lastMsg != groupRepeatMap[group.id]!!.thisMsg)
+                        groupRepeatMap[group.id]!!.stopMsg = ""
+                    else {
+                        if (groupRepeatMap[group.id]!!.thisMsg!= groupRepeatMap[group.id]!!.stopMsg) {
+                            groupRepeatMap[group.id]!!.stopMsg  = groupRepeatMap[group.id]!!.thisMsg
+                            group.sendMessage(message.contentToString())
+                        }
+                    }
+                } else {
+                    val temp = GroupRepeatInformation("", "", "")
+                    groupRepeatMap[group.id] = temp
                 }
             }
         }
