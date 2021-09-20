@@ -6,6 +6,8 @@ import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.enable
 import net.mamoe.mirai.console.plugin.PluginManager.INSTANCE.load
 import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader
 import java.util.HashMap
+import java.util.regex.Pattern
+import java.util.regex.*
 
 
 @OptIn(net.mamoe.mirai.console.util.ConsoleExperimentalApi::class)
@@ -24,8 +26,11 @@ suspend fun main() {
 //    }.alsoLogin()
 //
 //    MiraiConsole.job.join()
-    var strmap = HashMap<String, String>()
-    strmap.put("3313445307", "temp")
-    strmap.put("3", "2")
-    println(strmap["3"])
+    val nowMsg = "[mirai:source:[6377],[41312341]]但是我不知 道怎么改能让机器人发出来"
+    val patter = Pattern.compile("\\[mirai:source(.*?)\\]")
+    val matcherT = patter.matcher(nowMsg)
+    matcherT.find()
+    println(matcherT.start())
+    println(matcherT.end())
+    println(nowMsg.substring(matcherT.start(), matcherT.end()))
 }

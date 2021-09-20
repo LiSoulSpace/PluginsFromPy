@@ -8,12 +8,16 @@ import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.FriendMessageEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
+import net.mamoe.mirai.message.code.MiraiCode.serializeToMiraiCode
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToString
 import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.utils.info
 import java.io.File
 import java.util.HashMap
+import java.util.regex.*
 
 /**
  * 使用 kotlin 版请把
@@ -87,22 +91,23 @@ object PluginMain : KotlinPlugin(
                     group.sendImage(imageFileWeibo)
                     logger.info { "#baidu repeat over!" }
                 } else if (message.contentToString().equals("#leetcode", true)) {
-                    val pythonFilePathWeibo = "$pythonFilesDir/DailyQuestionGet.py"
-                    runSWC.runPythonScript(pythonFilePathWeibo)
-                    val imageFileWeibo = File("$pythonFilesDir/DailyQuestionGet.png")
-                    group.sendImage(imageFileWeibo)
+                    val pythonFilePathDailyQ = "$pythonFilesDir/DailyQuestionGet.py"
+                    runSWC.runPythonScript(pythonFilePathDailyQ)
+                    val imageFileDailyQ = File("$pythonFilesDir/DailyQuestionGet.png")
+                    group.sendImage(imageFileDailyQ)
                     logger.info { "#leetcode repeat over!" }
                 }
             } else {
                 if (groupRepeatMap.keys.contains(group.id)) {
                     groupRepeatMap[group.id]!!.lastMsg = groupRepeatMap[group.id]!!.thisMsg
-                    groupRepeatMap[group.id]!!.thisMsg = message.contentToString()
+                    groupRepeatMap[group.id]!!.thisMsg = message.serializeToMiraiCode()
+                    logger.info { message.serializeToMiraiCode() }
                     if (groupRepeatMap[group.id]!!.lastMsg != groupRepeatMap[group.id]!!.thisMsg)
                         groupRepeatMap[group.id]!!.stopMsg = ""
                     else {
-                        if (groupRepeatMap[group.id]!!.thisMsg!= groupRepeatMap[group.id]!!.stopMsg) {
-                            groupRepeatMap[group.id]!!.stopMsg  = groupRepeatMap[group.id]!!.thisMsg
-                            group.sendMessage(message.contentToString())
+                        if (groupRepeatMap[group.id]!!.thisMsg != groupRepeatMap[group.id]!!.stopMsg) {
+                            groupRepeatMap[group.id]!!.stopMsg = groupRepeatMap[group.id]!!.thisMsg
+                            group.sendMessage(deserializeMiraiCode(message.serializeToMiraiCode()))
                         }
                     }
                 } else {
