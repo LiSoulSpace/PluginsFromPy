@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.soulspace"
-version = "0.4.0"
+version = "0.4.5"
 
 repositories {
     mavenLocal()

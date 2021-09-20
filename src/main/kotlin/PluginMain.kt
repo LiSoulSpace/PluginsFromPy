@@ -38,7 +38,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.soulspace.pluginsFromPy",
         name = "pluginsFromPy",
-        version = "0.3.0"
+        version = "0.4.5"
     ) {
         author("soulspace")
         info(
