@@ -1,23 +1,18 @@
 package com.github.soulspace.pluginsfrompy
 
+import com.github.houbb.opencc4j.util.ZhConverterUtil
+import com.github.soulspace.pluginsfrompy.pojo.PoemTang
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.event.GlobalEventChannel
-import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.FriendMessageEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
-import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.message.code.MiraiCode.deserializeMiraiCode
-import net.mamoe.mirai.message.code.MiraiCode.serializeToMiraiCode
-import net.mamoe.mirai.message.data.Image
-import net.mamoe.mirai.message.data.Image.Key.queryUrl
-import net.mamoe.mirai.message.data.MessageChain.Companion.serializeToString
-import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.utils.info
 import java.io.File
 import java.util.HashMap
-import java.util.regex.*
 
 /**
  * 使用 kotlin 版请把
@@ -38,7 +33,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.soulspace.pluginsFromPy",
         name = "pluginsFromPy",
-        version = "0.4.5"
+        version = "1.0.1"
     ) {
         author("soulspace")
         info(
@@ -52,6 +47,7 @@ object PluginMain : KotlinPlugin(
     private val pythonFilesDir = File(System.getProperty("user.dir") + "/data/python-files")
     private val runSWC = RunScriptWithCommander
     private var groupRepeatMap = HashMap<Long, GroupRepeatInformation>()
+    private val getInfoFromDB = GetInfoFromDB
     override fun onEnable() {
         logger.info { "Plugin loaded" }
         //配置文件目录 "${dataFolder.absolutePath}/"
@@ -115,6 +111,115 @@ object PluginMain : KotlinPlugin(
                     groupRepeatMap[group.id] = temp
                 }
             }
+        }
+
+        eventChannel.subscribeAlways<GroupMessageEvent> {
+            if (message.contentToString().startsWith("#")) {
+                if (message.contentToString().startsWith("#poem ")) {
+                    var result: String = ""
+                    val commandBody = message.contentToString().substringAfter("#poem ")
+                    val commands = commandBody.split(" ")
+                    val commandsSize = commands.size
+                    if (commands[0] == "findByTitle") {
+                        var poemByTitle: List<PoemTang> = emptyList()
+                        if (commands[1] == "poem_tang" || commands[1] == "poem_song") {
+                            var title: String = commands[2]
+                            title = ZhConverterUtil.toTraditional(title)
+                            val poemNumberByTitle = getInfoFromDB.getPoemNumberByTitle(title)
+                            var pageNumAll = poemNumberByTitle / 5
+                            if (poemNumberByTitle % 5 != 0) pageNumAll += 1
+                            if (commandsSize == 3) {
+                                poemByTitle = getInfoFromDB.getPoemByTitle(title, 0, 5)
+                                result += "页数: 1 / $pageNumAll\n"
+                            } else if (commandsSize == 4) {
+                                try {
+                                    val pageNumber = commands[3].toInt()
+                                    if (pageNumber <= 0) {
+                                        group.sendMessage("请输入正确的页数")
+                                        return@subscribeAlways
+                                    }
+                                    poemByTitle = getInfoFromDB.getPoemByTitle(title, pageNumber * 5 - 5, 5)
+                                    result += "页数: $pageNumber / $pageNumAll\n"
+                                } catch (e: NumberFormatException) {
+                                    group.sendMessage("请输入正确的页数")
+                                    return@subscribeAlways
+                                }
+                            }
+                            poemByTitle.forEach {
+                                result += it.title + '\n'
+                                result += it.author + '\n'
+                                result += it.paragraphs
+                                result += '\n'
+                            }
+                            val f = File("$pythonFilesDir/poems.txt")
+                            result = ZhConverterUtil.toSimple(result)
+                            f.writeText(result)
+                            val pythonFileToImage = "$pythonFilesDir/ToImage.py"
+                            runSWC.runPythonScript(pythonFileToImage)
+                            val imagePoems = File("$pythonFilesDir/poems.png")
+                            group.sendImage(imagePoems)
+                        }
+                    } else if (commands[0] == "findByAuthor") {
+                        var poemByAuthor: List<PoemTang> = emptyList()
+                        if (commands[1] == "poem_tang" || commands[1] == "poem_song") {
+                            var author: String = commands[2]
+                            author = ZhConverterUtil.toTraditional(author)
+                            val poemNumberByAuthor = getInfoFromDB.getPoemNumberByAuthor(author)
+                            var pageNumAll = poemNumberByAuthor / 5
+                            if (poemNumberByAuthor % 5 != 0) pageNumAll += 1
+                            if (commandsSize == 3) {
+                                poemByAuthor = getInfoFromDB.getPoemByAuthor(author, 0, 5)
+                                result += "页数: 1 / $pageNumAll\n"
+                            } else if (commandsSize >= 4) {
+                                try {
+                                    val pageNumber = commands[3].toInt()
+                                    if (pageNumber <= 0) {
+                                        group.sendMessage("请输入正确的页数")
+                                        return@subscribeAlways
+                                    }
+                                    poemByAuthor =
+                                        getInfoFromDB.getPoemByAuthor(author, pageNumber * 5 - 5, 5)
+                                    result += "页数: $pageNumber / $pageNumAll\n"
+                                } catch (e: NumberFormatException) {
+                                    group.sendMessage("请输入正确的页数")
+                                    return@subscribeAlways
+                                }
+                            }
+                            poemByAuthor.forEach {
+                                result += it.title + '\n'
+                                result += it.author + '\n'
+                                result += it.paragraphs
+                                result += '\n'
+                            }
+                            val f = File("$pythonFilesDir/poems.txt")
+                            result = ZhConverterUtil.toSimple(result)
+                            f.writeText(result)
+                            val pythonFileToImage = "$pythonFilesDir/ToImage.py"
+                            runSWC.runPythonScript(pythonFileToImage)
+                            val imagePoems = File("$pythonFilesDir/poems.png")
+                            group.sendImage(imagePoems)
+                        } else if (commands[1] == "ci") {
+                            group.sendMessage("还没写呢")
+                        } else if (commands[1] == "all") {
+                            group.sendMessage("暂时没有其他可以搜索的库")
+                        }
+                    } else if (commands[0] == "author") {
+                        group.sendMessage("还没写呢")
+                    } else if (commands[0] == "next") {
+                        group.sendMessage("还没写呢")
+                    } else {
+                        group.sendMessage("请输入正确的命令！")
+                    }
+                }
+            }
+        }
+
+        eventChannel.subscribeAlways<FriendMessageEvent> {
+
+        }
+
+        eventChannel.subscribeAlways<NudgeEvent> {
+
         }
     }
 }
