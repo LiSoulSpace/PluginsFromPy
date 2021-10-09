@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession
 import org.junit.jupiter.api.Test
 import com.github.houbb.opencc4j.util.ZhConverterUtil
 import com.github.soulspace.pluginsfrompy.GetInfoFromDB
+import com.github.soulspace.pluginsfrompy.pojo.Ci
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.util.*
@@ -39,7 +40,11 @@ class PoemTangMapperTest {
     fun getCiByR() {
         val sqlSession: SqlSession = MybatisUtil.getSqlSession()
         val mapper: CiMapper = sqlSession.getMapper(CiMapper::class.java)
-        val ciByRhythmic = mapper.getCiByRhythmic("佳人醉")
+        var mapT = mutableMapOf<String, Any>()
+        mapT["rhythmic"] = "佳人醉"
+        mapT["startIndex"] = 0
+        mapT["pageSize"] = 5
+        val ciByRhythmic: List<Ci> = mapper.getCiByRhythmic(mapT)
         System.out.println(ciByRhythmic)
         sqlSession.close()
     }
@@ -57,8 +62,11 @@ class PoemTangMapperTest {
     fun getCiByRL() {
         val sqlSession: SqlSession = MybatisUtil.getSqlSession()
         val mapper: CiMapper = sqlSession.getMapper(CiMapper::class.java)
-        var mapT = mutableMapOf<String, Objects>()
-        val ciByRhythmic = mapper.getCiByRhythmic("佳人醉")
+        var mapT = mutableMapOf<String, Any>()
+        mapT["rhythmic"] = "佳人醉"
+        mapT["startIndex"] = 0
+        mapT["pageSize"] = 5
+        val ciByRhythmic = mapper.getCiByRhythmic(mapT)
         ciByRhythmic.forEach {
             println(it.rhythmic + '\n' + it.content)
         }

@@ -10,13 +10,15 @@ public interface PoemTangMapper {
 
     PoemTang getPoemTangById(int id);
 
-    List<PoemTang> getPoemTangByTitle(Map<String, Object> params);
+    List<PoemTang> getPoemTangByTitle(Map<String, Object> map);
 
-    List<PoemTang> getPoemTangByAuthor(Map<String, Object> params);
+    List<PoemTang> getPoemTangByAuthor(Map<String, Object> map);
 
-    List<PoemTang> getPoemTangParagraphsLike(Map<String, Object> params);
+    List<PoemTang> getPoemTangParagraphsLike(Map<String, Object> map);
 
     int getPoemTangNumberByAuthor(String author);
 
     int getPoemTangNumberByTitle(String title);
+
+    int getPoemTangNumberByParagraphsLike(String par);
 }

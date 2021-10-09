@@ -19,4 +19,6 @@ public interface PoemSongMapper {
     int getPoemSongNumberByAuthor(String author);
 
     int getPoemSongNumberByTitle(String title);
+
+    int getPoemSongNumberByParagraphsLike(String par);
 }

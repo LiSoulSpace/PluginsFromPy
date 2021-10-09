@@ -11,6 +11,7 @@
     <typeAliases>
         <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.Ci" alias="ci"/>
         <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.PoemTang" alias="poemTang"/>
+        <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.PoemSong" alias="poemSong"/>
     </typeAliases>
     <environments default="development">
         <environment id="development">
