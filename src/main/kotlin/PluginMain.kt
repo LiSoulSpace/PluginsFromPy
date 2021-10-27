@@ -219,18 +219,19 @@ object PluginMain : KotlinPlugin(
         eventChannel.subscribeAlways<GroupMessageEvent> {
             if (message.contentToString().startsWith("#")) {
                 if (message.contentToString().startsWith("#words ")) {
-                    var result: String = ""
                     val commandBody = message.contentToString().substringAfter("#words ")
                     val commands = commandBody.split(" ")
                     val commandsSize = commands.size
                     if (commands[0] == "cet4" || commands[0] == "cet6") {
                         if (commands[1] == "random") {
                             var wordNumber = 10
-                            if (commandsSize == 3) {
-                                wordNumber = commands[2].toInt()
-                                if (wordNumber <= 0) {
-                                    group.sendMessage("请输入正确的个数")
-                                    return@subscribeAlways
+                            if (commandsSize == 3 || commandsSize == 2) {
+                                if (commandsSize == 3) {
+                                    wordNumber = commands[2].toInt()
+                                    if (wordNumber <= 0) {
+                                        group.sendMessage("请输入正确的个数")
+                                        return@subscribeAlways
+                                    }
                                 }
                                 val wordsList = GetInfoFromWords.getRandomWords(wordNumber, "cet6")
                                 var answerString: String = ""

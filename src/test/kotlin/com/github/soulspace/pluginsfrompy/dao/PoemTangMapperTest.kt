@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager
 
 
 class PoemTangMapperTest {
-    val logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME)
+    private val logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME)
 
     @Test
     fun test() {

@@ -11,7 +11,7 @@ object RunScriptWithCommander {
         try {
             proc = Runtime.getRuntime().exec(commandStr)
             val `in` = BufferedReader(InputStreamReader(proc.inputStream))
-            var line: String? = null
+            var line: String?
             var lines: String? = null
             while (`in`.readLine().also { line = it } != null) {
                 println(line)
