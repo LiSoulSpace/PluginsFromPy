@@ -5,12 +5,11 @@ import com.github.soulspace.pluginsfrompy.util.MybatisUtil
 import org.apache.ibatis.session.SqlSession
 import org.junit.jupiter.api.Test
 import com.github.houbb.opencc4j.util.ZhConverterUtil
-import com.github.soulspace.pluginsfrompy.GetInfoFromDB
+import com.github.soulspace.pluginsfrompy.service.GetInfoFromDB
 import com.github.soulspace.pluginsfrompy.pojo.Ci
+import com.github.soulspace.pluginsfrompy.pojo.WordCET6
+import com.github.soulspace.pluginsfrompy.service.GetInfoFromWords
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import java.util.*
-import kotlin.math.log
 
 
 class PoemTangMapperTest {
@@ -23,6 +22,20 @@ class PoemTangMapperTest {
         val poemTangList: List<PoemTang> = poemTangMapper.getPoemTangList()
         for (poemTang in poemTangList) {
             System.out.println(poemTang)
+        }
+        sqlSession.close()
+    }
+
+    @Test
+    fun testCET6() {
+        val sqlSession: SqlSession = MybatisUtil.getSqlSession()
+        val wordCET6Mapper = sqlSession.getMapper(WordCET6Mapper::class.java)
+        var mapT = mutableMapOf<String, Any>()
+        mapT["startIndex"] = 0
+        mapT["pageSize"] = 20
+        val wordByWord: List<WordCET6> = wordCET6Mapper.getWordLimitPage(mapT)
+        for (word in wordByWord) {
+            System.out.println(word)
         }
         sqlSession.close()
     }
@@ -82,7 +95,7 @@ class PoemTangMapperTest {
     }
 
     @Test
-    fun getByTitle(){
+    fun getByTitle() {
         val getI = GetInfoFromDB
         val poemByTitle = getI.getPoemByTitle("日出行", 0, 5)
         System.out.println(poemByTitle)
@@ -98,5 +111,30 @@ class PoemTangMapperTest {
         logger.fatal("fatal level")
     }
 
+    @Test
+    fun randomNumber() {
+        var numberRange: IntRange = (1..5526)
+        val numberList = numberRange.toMutableList()
+        print("Randoms: ")
+        for (i in 1..10) {
+            print(numberList.size.toString())
+            val randoms = (1..numberList.size).random()
+            print(" ")
+            print(numberList.indexOf(randoms))
+            numberList.removeAt(randoms)
+            print("\n")
+        }
+        println()
+    }
 
+    @Test
+    fun getRandomWords() {
+        val t = GetInfoFromWords.getRandomWords(10, "cet6")
+        println("t.size:" + t.size.toString() + "\n")
+        var answerString = ""
+        for (i in (t.indices)) {
+            answerString += t.elementAt(i) + "\n"
+        }
+        println(answerString)
+    }
 }

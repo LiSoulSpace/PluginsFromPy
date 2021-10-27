@@ -26,11 +26,5 @@ suspend fun main() {
 //    }.alsoLogin()
 //
 //    MiraiConsole.job.join()
-    val nowMsg = "[mirai:source:[6377],[41312341]]但是我不知 道怎么改能让机器人发出来"
-    val patter = Pattern.compile("\\[mirai:source(.*?)\\]")
-    val matcherT = patter.matcher(nowMsg)
-    matcherT.find()
-    println(matcherT.start())
-    println(matcherT.end())
-    println(nowMsg.substring(matcherT.start(), matcherT.end()))
+
 }

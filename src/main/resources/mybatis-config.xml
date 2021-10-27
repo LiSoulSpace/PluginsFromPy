@@ -12,6 +12,7 @@
         <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.Ci" alias="ci"/>
         <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.PoemTang" alias="poemTang"/>
         <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.PoemSong" alias="poemSong"/>
+        <typeAlias type="com.github.soulspace.pluginsfrompy.pojo.WordCET6" alias="wordCET6"/>
     </typeAliases>
     <environments default="development">
         <environment id="development">
@@ -28,5 +29,6 @@
         <mapper resource="PoemTangMapper.xml"/>
         <mapper resource="PoemSongMapper.xml"/>
         <mapper resource="CiMapper.xml"/>
+        <mapper resource="WordCET6Mapper.xml"/>
     </mappers>
 </configuration>

@@ -2,6 +2,8 @@ package com.github.soulspace.pluginsfrompy
 
 import com.github.houbb.opencc4j.util.ZhConverterUtil
 import com.github.soulspace.pluginsfrompy.pojo.PoemTang
+import com.github.soulspace.pluginsfrompy.service.GetInfoFromDB
+import com.github.soulspace.pluginsfrompy.service.GetInfoFromWords
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
@@ -33,7 +35,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.soulspace.pluginsFromPy",
         name = "pluginsFromPy",
-        version = "1.0.1"
+        version = "1.1.0"
     ) {
         author("soulspace")
         info(
@@ -214,12 +216,56 @@ object PluginMain : KotlinPlugin(
             }
         }
 
+        eventChannel.subscribeAlways<GroupMessageEvent> {
+            if (message.contentToString().startsWith("#")) {
+                if (message.contentToString().startsWith("#words ")) {
+                    var result: String = ""
+                    val commandBody = message.contentToString().substringAfter("#words ")
+                    val commands = commandBody.split(" ")
+                    val commandsSize = commands.size
+                    if (commands[0] == "cet4" || commands[0] == "cet6") {
+                        if (commands[1] == "random") {
+                            var wordNumber = 10
+                            if (commandsSize == 3) {
+                                wordNumber = commands[2].toInt()
+                                if (wordNumber <= 0) {
+                                    group.sendMessage("请输入正确的个数")
+                                    return@subscribeAlways
+                                }
+                                val wordsList = GetInfoFromWords.getRandomWords(wordNumber, "cet6")
+                                var answerString: String = ""
+                                for (i in (wordsList.indices)) {
+                                    answerString += wordsList.elementAt(i) + "\n"
+                                }
+                                val txtName: String = "randomWords.txt"
+                                val aimPicName: String = "randomWords.png"
+                                val f = File("$pythonFilesDir/$txtName")
+                                f.writeText(answerString)
+                                val pythonFileToImage = "$pythonFilesDir/toImageByTxt.py"
+                                val pythonCommand = "$pythonFileToImage $txtName $aimPicName"
+                                runSWC.runPythonScript(pythonCommand)
+                                val imageRandomWords = File("$pythonFilesDir/$aimPicName")
+                                group.sendImage(imageRandomWords)
+                                logger.info { "words random $wordNumber finished." }
+                            }
+                        } else if (commands[1] == "search") {
+                            group.sendMessage("mei xie ne")
+                        } else {
+                            group.sendMessage("mei xie ne")
+                        }
+                    } else {
+                        group.sendMessage("请输入正确命令")
+                    }
+                }
+            }
+        }
+
         eventChannel.subscribeAlways<FriendMessageEvent> {
 
         }
 
         eventChannel.subscribeAlways<NudgeEvent> {
-
+            subject.sendMessage("您好，这里是机器人，基于框架mirai，现在仍然处于测试阶段。\nOperating by lisoulspace")
         }
     }
 }

@@ -1,10 +1,9 @@
-package com.github.soulspace.pluginsfrompy
+package com.github.soulspace.pluginsfrompy.service
 
 import com.github.soulspace.pluginsfrompy.dao.PoemTangMapper
 import com.github.soulspace.pluginsfrompy.pojo.PoemTang
 import com.github.soulspace.pluginsfrompy.util.MybatisUtil
 import org.apache.ibatis.session.SqlSession
-import java.util.*
 
 object GetInfoFromDB {
     fun getPoemNumberByAuthor(author: String): Int {
@@ -18,7 +17,7 @@ object GetInfoFromDB {
     fun getPoemByTitle(title: String, startIndex: Int, pageSize: Int): List<PoemTang> {
         val sqlSession: SqlSession = MybatisUtil.getSqlSession()
         val mapper: PoemTangMapper = sqlSession.getMapper(PoemTangMapper::class.java)
-        var params = emptyMap<String, Any>().toMutableMap()
+        val params = emptyMap<String, Any>().toMutableMap()
         params["title"] = title
         params["startIndex"] = startIndex
         params["pageSize"] = pageSize
