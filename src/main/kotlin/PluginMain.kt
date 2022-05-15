@@ -93,6 +93,7 @@ object PluginMain : KotlinPlugin(
                     runSWC.runPythonScript(pythonFilePathDailyQ)
                     val imageFileDailyQ = File("$pythonFilesDir/DailyQuestionGet.png")
                     group.sendImage(imageFileDailyQ)
+                    logger.info{"hello git!"}
                     logger.info { "#leetcode repeat over!" }
                 }
             } else {
