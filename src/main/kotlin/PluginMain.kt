@@ -94,6 +94,7 @@ object PluginMain : KotlinPlugin(
                     val imageFileDailyQ = File("$pythonFilesDir/DailyQuestionGet.png")
                     group.sendImage(imageFileDailyQ)
                     logger.info{"hello git!"}
+                    logger.info{"hello git2!"}
                     logger.info { "#leetcode repeat over!" }
                 }
             } else {
